@@ -41,8 +41,6 @@
 
 </div>
 
-> **To add screenshots:** save your app screenshots to `docs/screenshots/` as `landing.png`, `login.png`, and `dashboard.png`, then run `git add docs/screenshots/ && git commit -m "docs: add screenshots" && git push`
-
 ---
 
 ## Features
