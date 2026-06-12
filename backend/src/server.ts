@@ -21,6 +21,9 @@ const app = express();
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Trust the first proxy (required on HF Spaces / any reverse-proxy host)
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: isProduction ? {
@@ -70,7 +73,7 @@ app.get('/health', (_req, res) => {
 
 // Serve React frontend in production
 if (isProduction) {
-  const publicDir = path.join(__dirname, '../../public');
+  const publicDir = path.join(__dirname, '../public');
   if (fs.existsSync(publicDir)) {
     app.use(express.static(publicDir));
     app.get('*', (_req, res) => {
