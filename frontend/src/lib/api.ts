@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 import type { Application, Stats } from '@/types'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.PROD ? '' : (import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'),
 })
 
 // Attach Supabase JWT to every request
