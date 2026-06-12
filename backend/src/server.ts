@@ -62,6 +62,9 @@ app.use(rateLimit({
   max: 200,
   standardHeaders: true,
   legacyHeaders: false,
+  // Disable X-Forwarded-For validation — HF Spaces uses a multi-hop proxy
+  // chain that triggers a false-positive ValidationError crashing Node 20
+  validate: { xForwardedForHeader: false },
 }));
 
 // Routes
@@ -114,4 +117,8 @@ start().catch(console.error);
 process.on('SIGTERM', () => {
   console.log('SIGTERM received — shutting down gracefully');
   process.exit(0);
+});
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection (non-fatal):', reason);
 });
