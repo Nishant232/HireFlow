@@ -26,6 +26,8 @@ app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet({
+  // Allow HF Spaces iframe to embed the app
+  frameguard: false,
   contentSecurityPolicy: isProduction ? {
     directives: {
       defaultSrc: ["'self'"],
