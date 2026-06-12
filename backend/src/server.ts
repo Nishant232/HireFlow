@@ -24,18 +24,26 @@ const isProduction = process.env.NODE_ENV === 'production';
 // Trust the first proxy (required on HF Spaces / any reverse-proxy host)
 app.set('trust proxy', 1);
 
-// Security middleware
+// Security middleware — several Helmet defaults are disabled so HF Spaces can
+// embed the app in its iframe and load Google Fonts / Supabase correctly.
 app.use(helmet({
-  // Allow HF Spaces iframe to embed the app
-  frameguard: false,
+  frameguard: false,                    // allow HF iframe to embed the app
+  crossOriginEmbedderPolicy: false,     // required for iframe embedding on HF
+  crossOriginOpenerPolicy: false,       // avoid COOP breaking the HF context
   contentSecurityPolicy: isProduction ? {
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
       imgSrc: ["'self'", 'data:', 'https:'],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", 'https://*.supabase.co', 'https://openrouter.ai'],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      connectSrc: [
+        "'self'",
+        'https://*.supabase.co',
+        'https://openrouter.ai',
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
+      ],
     },
   } : false,
 }));
@@ -76,12 +84,13 @@ app.get('/health', (_req, res) => {
 // Serve React frontend in production
 if (isProduction) {
   const publicDir = path.join(__dirname, '../public');
-  if (fs.existsSync(publicDir)) {
-    app.use(express.static(publicDir));
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(publicDir, 'index.html'));
-    });
-  }
+  const indexHtml = path.join(publicDir, 'index.html');
+  console.log(`📁 Static dir: ${publicDir} — exists: ${fs.existsSync(publicDir)}`);
+  console.log(`📄 index.html: ${indexHtml} — exists: ${fs.existsSync(indexHtml)}`);
+  app.use(express.static(publicDir));
+  app.get('*', (_req, res) => {
+    res.sendFile(indexHtml);
+  });
 }
 
 // Error handler
