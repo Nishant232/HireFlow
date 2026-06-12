@@ -34,8 +34,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config user.email "github-actions@github.com"
-          git config user.name "GitHub Actions"
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
 
       - name: Stage built frontend and commit
         run: |
@@ -48,5 +48,14 @@ jobs:
         run: |
           git config --global credential.helper store
           echo "https://Nishant00:${HF_TOKEN}@huggingface.co" > ~/.git-credentials
+
+          # Create a fresh orphan branch — no history, so no binary files from old commits
+          git checkout --orphan hf-deploy
+
+          # Remove screenshots (binary files HF rejects)
+          git rm -rf --cached docs/screenshots/ 2>/dev/null || true
+
+          git commit -m "deploy: $(date -u +%Y%m%dT%H%M%SZ)"
+
           git remote add hf https://huggingface.co/spaces/Nishant00/HireFlow
-          git push hf HEAD:main --force
+          git push hf hf-deploy:main --force
