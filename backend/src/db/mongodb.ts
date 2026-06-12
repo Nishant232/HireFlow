@@ -17,13 +17,15 @@ if (!MONGODB_URI) {
   throw new Error('MONGODB_URI environment variable is required');
 }
 
+const mongoUri: string = MONGODB_URI;
+
 let isConnected = false;
 
 export async function connectDB(): Promise<void> {
   if (isConnected) return;
 
   try {
-    const conn = await mongoose.connect(MONGODB_URI, {
+    const conn = await mongoose.connect(mongoUri, {
       dbName: 'jobtrackr',
     });
 
