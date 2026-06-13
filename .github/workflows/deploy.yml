@@ -55,9 +55,8 @@ jobs:
           # Remove screenshots (binary files HF rejects)
           git rm -rf --cached docs/screenshots/ 2>/dev/null || true
 
-          # Prepend HF Space config frontmatter to README
-          printf -- '---\ntitle: HireFlow\ncolorFrom: blue\ncolorTo: purple\nsdk: docker\npinned: false\n---\n\n' | cat - README.md > /tmp/README_hf.md
-          mv /tmp/README_hf.md README.md
+          # Write a minimal HF Space README (only the config frontmatter HF requires)
+          printf -- '---\ntitle: HireFlow\ncolorFrom: blue\ncolorTo: purple\nsdk: docker\npinned: false\n---\n\nHireFlow — AI-powered job search platform.\n' > README.md
           git add README.md
 
           git commit -m "deploy: $(date -u +%Y%m%dT%H%M%SZ)"
