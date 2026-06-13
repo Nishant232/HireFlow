@@ -44,6 +44,8 @@ app.use(helmet({
         'https://fonts.googleapis.com',
         'https://fonts.gstatic.com',
       ],
+      // Allow HF Spaces (huggingface.co) to embed this app in its iframe
+      frameAncestors: ["'self'", 'https://huggingface.co'],
     },
   } : false,
 }));
